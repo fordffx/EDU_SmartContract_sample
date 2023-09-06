@@ -1,0 +1,87 @@
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/asset-transfer-basic/contract_js$ npm install
+
+up to date, audited 403 packages in 2s
+
+41 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/asset-transfer-basic/contract_js$ cd ../../test-network
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer version
+peer:
+ Version: v2.5.4
+ Commit SHA: e1e8e2e
+ Go version: go1.20.6
+ OS/Arch: linux/amd64
+ Chaincode:
+  Base Docker Label: org.hyperledger.fabric
+  Docker Namespace: hyperledger
+
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode package basic.tar.gz --path ../asset-transfer-basic/contract_js/ --lang node --label basic_1.0
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ export CORE_PEER_TLS_ENABLED=true
+export CORE_PEER_LOCALMSPID="Org1MSP"
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+export CORE_PEER_ADDRESS=localhost:7051
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode install basic.tar.gz
+2023-09-06 19:21:08.673 CST 0001 INFO [cli.lifecycle.chaincode] submitInstallProposal -> Installed remotely: response:<status:200 payload:"\nJbasic_1.0:089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859\022\tbasic_1.0" > 
+2023-09-06 19:21:08.673 CST 0002 INFO [cli.lifecycle.chaincode] submitInstallProposal -> Chaincode code package identifier: basic_1.0:089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ export CORE_PEER_LOCALMSPID="Org2MSP"
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt
+export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp
+export CORE_PEER_ADDRESS=localhost:9051
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode install basic.tar.gz
+2023-09-06 19:22:02.238 CST 0001 INFO [cli.lifecycle.chaincode] submitInstallProposal -> Installed remotely: response:<status:200 payload:"\nJbasic_1.0:089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859\022\tbasic_1.0" > 
+2023-09-06 19:22:02.238 CST 0002 INFO [cli.lifecycle.chaincode] submitInstallProposal -> Chaincode code package identifier: basic_1.0:089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode queryinstalled
+Installed chaincodes on peer:
+Package ID: basic_1.0:089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859, Label: basic_1.0
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ export CC_PACKAGE_ID=basic_1.0:089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name basic --version 1.0 --package-id $CC_PACKAGE_ID --sequence 1 --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+2023-09-06 19:23:31.939 CST 0001 INFO [chaincodeCmd] ClientWait -> txid [c8e5780c903073645d33cb55f3ee87a7ce47d81e852ce6ebec8a36dd47435aa6] committed with status (VALID) at localhost:9051
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ export CORE_PEER_LOCALMSPID="Org1MSP"
+export CORE_PEER_MSPCONFIGPATH=${PWD}/organizations/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+export CORE_PEER_TLS_ROOTCERT_FILE=${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+export CORE_PEER_ADDRESS=localhost:7051
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode approveformyorg -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name basic --version 1.0 --package-id $CC_PACKAGE_ID --sequence 1 --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem"
+2023-09-06 19:24:37.232 CST 0001 INFO [chaincodeCmd] ClientWait -> txid [5e04b6199d8bfd38a17b4e8c779bf7d5cf39ebd645beb5d23f49cc7153446116] committed with status (VALID) at localhost:7051
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode checkcommitreadiness --channelID mychannel --name basic --version 1.0 --sequence 1 --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" --output json
+{
+	"approvals": {
+		"Org1MSP": true,
+		"Org2MSP": true
+	}
+}
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode commit -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --channelID mychannel --name basic --version 1.0 --sequence 1 --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" --peerAddresses localhost:7051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" --peerAddresses localhost:9051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt"
+2023-09-06 19:25:30.791 CST 0001 INFO [chaincodeCmd] ClientWait -> txid [7fadc6f0a5b9066d802e1a764b1fe85b47d034536d2dc272046ef59d606c7e73] committed with status (VALID) at localhost:7051
+2023-09-06 19:25:30.792 CST 0002 INFO [chaincodeCmd] ClientWait -> txid [7fadc6f0a5b9066d802e1a764b1fe85b47d034536d2dc272046ef59d606c7e73] committed with status (VALID) at localhost:9051
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer lifecycle chaincode querycommitted --channelID mychannel --name basic
+Committed chaincode definition for chaincode 'basic' on channel 'mychannel':
+Version: 1.0, Sequence: 1, Endorsement Plugin: escc, Validation Plugin: vscc, Approvals: [Org1MSP: true, Org2MSP: true]
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" --peerAddresses localhost:9051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" -c '{"function":"InitLedger","Args":[]}'
+2023-09-06 19:26:23.576 CST 0001 INFO [chaincodeCmd] chaincodeInvokeOrQuery -> Chaincode invoke successful. result: status:200 
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
+[{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"理解运用","studentId":"strudent001","studentName":"yangguo"},{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"理解运用","studentId":"strudent002","studentName":"huangwei"},{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"未学习","studentId":"strudent003","studentName":"wanglin"},{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"理解运用","studentId":"strudent004","studentName":"zhengfang"},{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"未学习","studentId":"strudent005","studentName":"luoyun"}]
+
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer chaincode invoke -o localhost:7050 --ordererTLSHostnameOverride orderer.example.com --tls --cafile "${PWD}/organizations/ordererOrganizations/example.com/orderers/orderer.example.com/msp/tlscacerts/tlsca.example.com-cert.pem" -C mychannel -n basic --peerAddresses localhost:7051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt" --peerAddresses localhost:9051 --tlsRootCertFiles "${PWD}/organizations/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt" -c '{"Args": ["UpdateAsset", "strudent003", "wanglin", "5", "函数的单调性", "理解运用"]}'
+2023-09-06 20:07:13.488 CST 0001 INFO [chaincodeCmd] chaincodeInvokeOrQuery -> Chaincode invoke successful. result: status:200 payload:"{\"type\":\"Buffer\",\"data\":[]}" 
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/test-network$ peer chaincode query -C mychannel -n basic -c '{"Args":["GetAllAssets"]}'
+[{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"理解运用","studentId":"strudent001","studentName":"yangguo"},{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"理解运用","studentId":"strudent002","studentName":"huangwei"},{"knowledgePointId":"5","knowledgePointName":"函数的单调性","learningStatus":"理解运用","studentId":"strudent003","studentName":"wanglin"},{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"理解运用","studentId":"strudent004","studentName":"zhengfang"},{"docType":"asset","knowledgePointId":5,"knowledgePointName":"函数的单调性","learningStatus":"未学习","studentId":"strudent005","studentName":"luoyun"}]
+
+
+
+==================
+ffx@debian11:/mnt/sdb1/fabric-samples/fabric-samples/asset-transfer-basic/application_js$ docker ps -a
+CONTAINER ID   IMAGE                                                                                                                                                                    COMMAND                   CREATED          STATUS                    PORTS                                                                                                                             NAMES
+3c352354e0be   dev-peer0.org2.example.com-basic_1.0-089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859-eb3d4eb3477c233eae106b771168a51d2aa776a1a9d3fd805a40f8a91e987e5a   "docker-entrypoint.s…"   4 minutes ago    Up 4 minutes                                                                                                                                                dev-peer0.org2.example.com-basic_1.0-089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859
+e5a94957749a   dev-peer0.org1.example.com-basic_1.0-089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859-448457c6234a82dbee71fe6dde623a942eff58745c452a073793f5646342e622   "docker-entrypoint.s…"   4 minutes ago    Up 4 minutes                                                                                                                                                dev-peer0.org1.example.com-basic_1.0-089845036a16d79551989e56207e5d4347e90ef30db7ceb4658fb2f8ee61c859
+ff7b33f7217b   hyperledger/fabric-tools:latest                                                                                                                                          "/bin/bash"               27 minutes ago   Up 27 minutes                                                                                                                                               cli
+94c3ae520a02   hyperledger/fabric-peer:latest                                                                                                                                           "peer node start"         27 minutes ago   Up 27 minutes             0.0.0.0:7051->7051/tcp, :::7051->7051/tcp, 0.0.0.0:9444->9444/tcp, :::9444->9444/tcp                                              peer0.org1.example.com
+f5cbc4b0d767   hyperledger/fabric-peer:latest                                                                                                                                           "peer node start"         27 minutes ago   Up 27 minutes             0.0.0.0:9051->9051/tcp, :::9051->9051/tcp, 7051/tcp, 0.0.0.0:9445->9445/tcp, :::9445->9445/tcp                                    peer0.org2.example.com
+287b49f6d8d5   hyperledger/fabric-orderer:latest                                                                                                                                        "orderer"                 27 minutes ago   Up 27 minutes             0.0.0.0:7050->7050/tcp, :::7050->7050/tcp, 0.0.0.0:7053->7053/tcp, :::7053->7053/tcp, 0.0.0.0:9443->9443/tcp, :::9443->9443/tcp   orderer.example.com
+a31339230de8   hyperledger/fabric-nodeenv:2.5                                                                                                                                           "docker-entrypoint.s…"   7 days ago       Exited (0) 7 days ago                                                                                                                                       quirky_tesla
+fa157b79ccb3   hyperledger/fabric-nodeenv:2.4                                                                                                                                           "docker-entrypoint.s…"   8 days ago       Exited (1) 8 days ago                                                                                                                                       friendly_meitner
+0194b57629da   hyperledger/fabric-nodeenv:2.4                                                                                                                                           "docker-entrypoint.s…"   9 days ago       Exited (137) 9 days ago                                                                                                                                     strange_hodgkin
+17595e8853f3   hyperledger/fabric-nodeenv:2.4                                                                                                                                           "docker-entrypoint.s…"   9 days ago       Exited (137) 9 days ago                                                                                                                                     adoring_hopper
+2946edbca9ce   hyperledger/fabric-nodeenv:2.4                                                                                                                                           "docker-entrypoint.s…"   9 days ago       Exited (137) 9 days ago                                                                                                                                     romantic_solomon
+05c4db26fbe1   hyperledger/fabric-nodeenv:2.4                                                                                                                                           "docker-entrypoint.s…"   9 days ago       Exited (137) 9 days ago
