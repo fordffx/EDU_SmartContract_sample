@@ -3,7 +3,8 @@
 Simple Hyperledger Fabric chaincode used in education proccess
 
 使用说明：
-1.按https://hyperledger-fabric.readthedocs.io/en/latest/deploy_chaincode.html的说明配置好网络,到npm install这一步停下，进入第2步；
+
+1.按 https://hyperledger-fabric.readthedocs.io/en/latest/deploy_chaincode.html 的说明配置好网络,到npm install这一步停下，进入第2步；
 
 2.在部署链码之前将 index.js、package.json、studentAssetTransfer.js 放到一个文件夹中（如chaincode_js），在此文件夹下新建一名为“lib”的文件夹，将studentAssetTransfer.js放在lib中；
 
